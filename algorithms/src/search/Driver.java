@@ -26,6 +26,8 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.omg.CORBA.INV_POLICY;
+
 import gui.ExponentialTable;
 import gui.FibonacciTable;
 import gui.SearchTable;
@@ -82,6 +84,8 @@ public class Driver extends JFrame
 
 	private Mode								mode				= Mode.FINISHED;
 
+	private boolean							in_progress	= false;
+
 	public Driver()
 	{
 		// Set title
@@ -118,6 +122,32 @@ public class Driver extends JFrame
 		input_box.setFont(input_font);
 		input_box.setText("1, 2, 3, 4, 5");
 		input_box.setEnabled(true);
+		input_box.setAction(new AbstractAction()
+		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 7381400032055686269L;
+
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				button_toggle.setEnabled(true);
+				button_increment.setEnabled(true);
+				button_fastforward.setEnabled(true);
+
+				int[] sorted_list = new int[1024];
+				int value = 125;
+				for (int i = 0; i < 1023; i++)
+				{
+					sorted_list[i] = i;
+				}
+				createSearch(sorted_list, value);
+				pause();
+
+			}
+		});
 
 		north_split.add(input_box, 0);
 
@@ -264,24 +294,17 @@ public class Driver extends JFrame
 		setLocationRelativeTo(null);
 		setVisible(true);
 
-		int[] sorted_list = new int[1024];
-		int value = 125;
-		for (int i = 0; i < 1023; i++)
-
-		{
-			sorted_list[i] = i;
-		}
-
-		createSearch(sorted_list, value);
 	}
 
 	private void createSearch(int[] sorted_list, int value)
 	{
-		// fibonacci = new FibonacciSearch(sorted_list, value);
+		searches[0] = new FibonacciSearch(sorted_list, value);
+		searches[1] = new FibonacciSearch(sorted_list, value);
 	}
 
 	private void simulate()
 	{
+		in_progress = true;
 		Result[] result = new Result[2];
 		int finished_count = 0;
 		while (mode == Mode.PLAY || mode == Mode.FAST_FORWARD || mode == Mode.INCREMENT)
@@ -293,7 +316,8 @@ public class Driver extends JFrame
 				if (result[i] != Result.UNDEF && result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
 				{
 					searches[i].next();
-					table_data[i].addRow(searches[i].getRow());
+					searches[i].getNextStep();
+					((SearchTable) tables[i].getModel()).addRow(searches[i].getRow());
 				}
 				else
 				{
@@ -305,11 +329,15 @@ public class Driver extends JFrame
 				mode = Mode.FINISHED;
 			}
 
+			tables[0].setModel(table_data[0]);
+			tables[1].setModel(table_data[1]);
+
 			if (mode == Mode.INCREMENT)
 			{
 				mode = Mode.PAUSE;
 			}
 		}
+		in_progress = false;
 	}
 
 	private void pause()
@@ -322,18 +350,30 @@ public class Driver extends JFrame
 	{
 		button_toggle.setText("Pause");
 		mode = Mode.PLAY;
+		if (!in_progress)
+		{
+			simulate();
+		}
 	}
 
 	private void increment()
 	{
 		button_toggle.setText("Pause");
 		mode = Mode.INCREMENT;
+		if (!in_progress)
+		{
+			simulate();
+		}
 	}
 
 	private void fastforward()
 	{
 		button_toggle.setText("Play ");
 		mode = Mode.FAST_FORWARD;
+		if (!in_progress)
+		{
+			simulate();
+		}
 	}
 
 	/**

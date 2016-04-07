@@ -50,6 +50,7 @@ public abstract class SearchTable extends AbstractTableModel
 	 */
 	public boolean addRow(Object[] row)
 	{
+		System.out.println(row.toString());
 		return data.add(row);
 	}
 

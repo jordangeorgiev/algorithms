@@ -17,7 +17,7 @@ public abstract class Search
 
 	ArrayList<Integer>	relVars	= new ArrayList<Integer>();
 
-	Result							result;
+	public Result							result;
 
 	public Search(int[] items, int item)
 	{
@@ -105,6 +105,6 @@ public abstract class Search
 
 	public Object[] getRow()
 	{
-		return new Object[] { steps, index, result.toString(), left, right };
+		return new Object[] { steps, index, result.toString() };
 	}
 }
