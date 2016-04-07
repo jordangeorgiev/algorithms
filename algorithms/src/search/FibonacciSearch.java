@@ -43,7 +43,7 @@ public class FibonacciSearch extends Search
 			}
 		}
 
-		System.out.println("fib2: " + fib2 + " Fib1: " + fib1 + " Fib: " + fib);
+		//System.out.println("fib2: " + fib2 + " Fib1: " + fib1 + " Fib: " + fib);
 		// while(items[index]!=item){
 		index = Math.min((offset + fib2), len);
 		// if(index==len){
@@ -81,7 +81,10 @@ public class FibonacciSearch extends Search
 		relVars.set(2, fib2);
 
 	}
-
+	public Object[] getRow()
+	{
+		return new Object[] { steps, index, result.toString(),fib, fib1, fib2 };
+	}
 	// }
 
 }

@@ -126,10 +126,10 @@ public class absExponSearch extends Search {
 			else{
 				this.result = Result.LEFT;
 				boundsFound = true;
-				System.out.println("index: " + index + " length:" + length);
+				//System.out.println("index: " + index + " length:" + length);
 				right = Math.min(index, (length - 1));
 				left = right/2;
-				System.out.println("Bounds found: Left: " + left + " Right:" + right);
+				//System.out.println("Bounds found: Left: " + left + " Right:" + right);
 				int midPoint = left + ((right - left)/2);
 				
 				nextIndex = midPoint; 
@@ -156,21 +156,21 @@ public class absExponSearch extends Search {
 		}
 	
 	public void binSearch(){
-		System.out.println("left:  " + left + " Right: " + right);
+		//System.out.println("left:  " + left + " Right: " + right);
 		
-		System.out.println("index:  " + index);
+		//System.out.println("index:  " + index);
 		
 		
 		
 		
 		if(items[index] == item){
-			System.out.println("The element you are searching for is located at index:" + index);
+			//System.out.println("The element you are searching for is located at index:" + index);
 			//return right;
 			result = Result.EQUAL;
 			//index = midPoint;
 		}
 		else if(right == left && items[index] != item){
-			System.out.println("item is not an element of the array. The value returned is not actually the index of item");
+			//System.out.println("item is not an element of the array. The value returned is not actually the index of item");
 			//return -1;
 			result = Result.UNDEF;
 			nextIndex = left + ((right - left)/2);
@@ -183,19 +183,23 @@ public class absExponSearch extends Search {
 			nextIndex = left + ((right - left)/2);
 		}
 		else if(item >= items[index]){
-			System.out.println();
+			//System.out.println();
 			//return binSearch(items, item, midPoint, right);
 			left = index + 1;
 			result = Result.RIGHT;
 			nextIndex = left + ((right - left)/2);
 		}
 		else{
-			System.out.println("Something went wrong");
+			//System.out.println("Something went wrong");
 			//return -1;
 			nextIndex = left + ((right - left)/2);
 		}
 		
 		
+	}
+	public Object[] getRow()
+	{
+		return new Object[] { steps, index, result.toString(), left, right};
 	}
 }
 		

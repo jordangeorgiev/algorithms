@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.Timer;
 
 import gui.ExponentialTable;
 import gui.FibonacciTable;
@@ -51,41 +52,68 @@ public class Driver extends JFrame
 		PLAY, PAUSE, INCREMENT, FAST_FORWARD, FINISHED
 	}
 
+	private static final int	IMMEDIATE		= 0;
+	private static final int	NORMAL			= 1000;
+
 	// Main panel
-	private JPanel				panel;
-	private BorderLayout	layout;
+	private JPanel						panel;
+	private BorderLayout			layout;
 
 	// Contains input-bar and toolbar
-	private JPanel				north_split;
-	private GridLayout		north_layout;
-	private JTextField		input_box;
-	private JPanel				toolbar;
+	private JPanel						north_split;
+	private GridLayout				north_layout;
+	private JTextField				input_box;
+	private JPanel						toolbar;
 
 	// private GridBagLayout center_layout;
 	// private GridBagConstraints center_constraints;
 
-	private JButton				button_toggle;
-	private JButton				button_increment;
-	private JButton				button_fastforward;
+	private JButton						button_toggle;
+	private JButton						button_increment;
+	private JButton						button_fastforward;
 
 	// Contains both split panels
-	private JSplitPane		center_split;
+	private JSplitPane				center_split;
 
-	private JScrollPane[]	table_panes	= new JScrollPane[2];
-	private JTable[]			tables			= new JTable[2];
+	private JScrollPane[]			table_panes	= new JScrollPane[2];
+	private JTable[]					tables			= new JTable[2];
 
-	private SearchTable[]	table_data	= new SearchTable[2];
+	private SearchTable[]			table_data	= new SearchTable[2];
 
-	private Search[]			searches		= new Search[2];
+	private Search[]					searches		= new Search[2];
 
-	protected Mode				mode;
+	private Mode							mode;
 
-	protected boolean			in_progress	= false;
+	private Timer							timer;
 
 	public Driver()
 	{
 		// Set title
 		super("Fibonacci vs. Exponential Search");
+
+		timer = new Timer(NORMAL, new AbstractAction()
+		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 7381400032055686269L;
+
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				if (!iterate())
+				{
+					timer.stop();
+					mode = Mode.FINISHED;
+					button_toggle.setEnabled(false);
+					button_increment.setEnabled(false);
+					button_fastforward.setEnabled(false);
+				}
+			}
+		});
+
+		timer.setInitialDelay(0);
 
 		// Set default close operation
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -140,7 +168,6 @@ public class Driver extends JFrame
 					sorted_list[i] = i;
 				}
 				createSearch(sorted_list, value);
-				pause();
 
 			}
 		});
@@ -294,85 +321,76 @@ public class Driver extends JFrame
 
 	private void createSearch(int[] sorted_list, int value)
 	{
+		timer.stop();
 		searches[0] = new FibonacciSearch(sorted_list, value);
 		searches[1] = new absExponSearch(sorted_list, value);
 		increment();
 	}
 
-	private void simulate()
+	private boolean iterate()
 	{
-		in_progress = true;
 		Result[] result = new Result[2];
 		int finished_count = 0;
-		while (mode == Mode.PLAY || mode == Mode.FAST_FORWARD || mode == Mode.INCREMENT)
+		for (int i = 0; i < 2; i++)
 		{
-			finished_count = 0;
-			for (int i = 0; i < 2; i++)
+			result[i] = searches[i].result;
+			if (result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
 			{
-				result[i] = searches[i].result;
-				if (result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
-				{
-					searches[i].next();
-					searches[i].getNextStep();
-					((SearchTable) tables[i].getModel()).addRow(searches[i].getRow());
-					System.out.println(searches[i].toString());
-				}
-				else
-				{
-					finished_count = finished_count + 1;
-				}
+				searches[i].next();
+				searches[i].getNextStep();
+				table_data[i].addRow(searches[i].getRow());
+				tables[i].repaint();
 			}
-			if (finished_count == 2)
+			else
 			{
-				mode = Mode.FINISHED;
-			}
-
-			// tables[0].setModel(table_data[0]);
-			// tables[1].setModel(table_data[1]);
-
-			if (mode == Mode.INCREMENT)
-			{
-				mode = Mode.PAUSE;
+				finished_count = finished_count + 1;
 			}
 		}
-		in_progress = false;
+		if (finished_count == 2)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	private void pause()
 	{
 		button_toggle.setText("Play ");
 		mode = Mode.PAUSE;
-		System.out.println(mode);
+		timer.stop();
+
 	}
 
 	private void play()
 	{
 		button_toggle.setText("Pause");
 		mode = Mode.PLAY;
-		if (!in_progress)
-		{
-			simulate();
-		}
+		timer.stop();
+		timer.setDelay(NORMAL);
+		timer.restart();
 	}
 
 	private void increment()
 	{
 		button_toggle.setText("Pause");
 		mode = Mode.INCREMENT;
-		if (!in_progress)
-		{
-			simulate();
-		}
+		timer.stop();
+		timer.setDelay(IMMEDIATE);
+		timer.setRepeats(false);
+		timer.start();
+		mode = Mode.PAUSE;
+		timer.stop();
+		timer.setRepeats(true);
+		mode = Mode.PAUSE;
 	}
 
 	private void fastforward()
 	{
 		button_toggle.setText("Play ");
 		mode = Mode.FAST_FORWARD;
-		if (!in_progress)
-		{
-			simulate();
-		}
+		timer.stop();
+		timer.setDelay(IMMEDIATE);
+		timer.restart();
 	}
 
 	/**
