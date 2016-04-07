@@ -1,3 +1,5 @@
+package search;
+
 
 public class absBinSearch extends Search{
 

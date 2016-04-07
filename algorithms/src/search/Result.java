@@ -1,3 +1,5 @@
+package search;
+
 /**
 	 * Result - an enum representing the result of the current step
 	 * of the search algorithm.
