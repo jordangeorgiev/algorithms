@@ -4,10 +4,8 @@
 package search;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+// import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -25,8 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
-import org.omg.CORBA.INV_POLICY;
 
 import gui.ExponentialTable;
 import gui.FibonacciTable;
@@ -56,35 +52,35 @@ public class Driver extends JFrame
 	}
 
 	// Main panel
-	private JPanel							panel;
-	private BorderLayout				layout;
+	private JPanel				panel;
+	private BorderLayout	layout;
 
 	// Contains input-bar and toolbar
-	private JPanel							north_split;
-	private GridLayout					north_layout;
-	private JTextField					input_box;
-	private JPanel							toolbar;
+	private JPanel				north_split;
+	private GridLayout		north_layout;
+	private JTextField		input_box;
+	private JPanel				toolbar;
 
 	// private GridBagLayout center_layout;
-	private GridBagConstraints	center_constraints;
+	// private GridBagConstraints center_constraints;
 
-	private JButton							button_toggle;
-	private JButton							button_increment;
-	private JButton							button_fastforward;
+	private JButton				button_toggle;
+	private JButton				button_increment;
+	private JButton				button_fastforward;
 
 	// Contains both split panels
-	private JSplitPane					center_split;
+	private JSplitPane		center_split;
 
-	private JScrollPane[]				table_panes	= new JScrollPane[2];
-	private JTable[]						tables			= new JTable[2];
+	private JScrollPane[]	table_panes	= new JScrollPane[2];
+	private JTable[]			tables			= new JTable[2];
 
-	private SearchTable[]				table_data	= new SearchTable[2];
+	private SearchTable[]	table_data	= new SearchTable[2];
 
-	private Search[]						searches		= new Search[2];
+	private Search[]			searches		= new Search[2];
 
-	private Mode								mode				= Mode.FINISHED;
+	protected Mode				mode;
 
-	private boolean							in_progress	= false;
+	protected boolean			in_progress	= false;
 
 	public Driver()
 	{
@@ -299,7 +295,8 @@ public class Driver extends JFrame
 	private void createSearch(int[] sorted_list, int value)
 	{
 		searches[0] = new FibonacciSearch(sorted_list, value);
-		searches[1] = new FibonacciSearch(sorted_list, value);
+		searches[1] = new absExponSearch(sorted_list, value);
+		increment();
 	}
 
 	private void simulate()
@@ -313,11 +310,12 @@ public class Driver extends JFrame
 			for (int i = 0; i < 2; i++)
 			{
 				result[i] = searches[i].result;
-				if (result[i] != Result.UNDEF && result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
+				if (result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
 				{
 					searches[i].next();
 					searches[i].getNextStep();
 					((SearchTable) tables[i].getModel()).addRow(searches[i].getRow());
+					System.out.println(searches[i].toString());
 				}
 				else
 				{
@@ -329,8 +327,8 @@ public class Driver extends JFrame
 				mode = Mode.FINISHED;
 			}
 
-			tables[0].setModel(table_data[0]);
-			tables[1].setModel(table_data[1]);
+			// tables[0].setModel(table_data[0]);
+			// tables[1].setModel(table_data[1]);
 
 			if (mode == Mode.INCREMENT)
 			{
@@ -344,6 +342,7 @@ public class Driver extends JFrame
 	{
 		button_toggle.setText("Play ");
 		mode = Mode.PAUSE;
+		System.out.println(mode);
 	}
 
 	private void play()
