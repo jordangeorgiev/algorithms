@@ -4,10 +4,10 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ListIterator;
-
 import javax.swing.JPanel;
 
 /**
@@ -27,31 +27,41 @@ public class SearchBar extends JPanel
 
 	public SearchBar(int length)
 	{
+		setBackground(Color.WHITE);
 		this.length = length;
 		this.count = 0;
 		this.indices = new ArrayList<Integer>();
 	}
 
-	public void paint(int index, Color color)
+	public void paint(int index, Color color, Graphics g)
 	{
 
-		this.getGraphics().setColor(color);
+		g.setColor(color);
 
 		int x = (index * getWidth()) / length;
 		int y = getHeight();
 		int width = getWidth() / length;
 		int height = getHeight();
 
-		this.getGraphics().drawRect(x, y, width, height);
+		g.drawRect(x, y, width, height);
 	}
 
 	public void redraw()
 	{
+		System.out.println(getWidth());
+		revalidate();
+		repaint();
+	}
+
+	public void paintComponent(Graphics g)
+	{
 		Iterator<Integer> iterator = indices.listIterator();
+		g.clearRect(0, 0, getWidth(), getHeight());
 		for (int i = 0; i < count; i++)
 		{
-			paint(iterator.next(), Color.GRAY);
+			paint(iterator.next(), Color.BLACK, g);
 		}
+		super.paintComponent(g);
 	}
 
 	public void add(int index)
@@ -65,7 +75,7 @@ public class SearchBar extends JPanel
 		this.length = length;
 		this.count = 0;
 		this.indices.clear();
-		this.getGraphics().clearRect(0, 0, getWidth(), getHeight());
+		redraw();
 	}
 
 }

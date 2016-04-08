@@ -4,6 +4,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -105,7 +107,7 @@ public class Driver extends JFrame
 
 	private JPanel[]							split_panels	= new JPanel[2];
 	private SearchBar[]						search_bars		= new SearchBar[2];
-	private GridBagLayout[]				split_layouts	= new GridBagLayout[2];
+	private BoxLayout[]						split_layouts	= new BoxLayout[2];
 
 	private JScrollPane[]					table_panes		= new JScrollPane[2];
 	private JTable[]							tables				= new JTable[2];
@@ -400,19 +402,39 @@ public class Driver extends JFrame
 		//////////////////
 		center_split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-		////////////
-		// Tables //
-		////////////
+		////////////////
+		// Table Data //
+		////////////////
 		table_data[0] = new FibonacciTable();
 		table_data[1] = new ExponentialTable();
+
 		for (int i = 0; i < 2; i++)
 		{
+			////////////////
+			// Split Pane //
+			////////////////
+			split_panels[i] = new JPanel();
+			split_layouts[i] = new BoxLayout(split_panels[i], BoxLayout.Y_AXIS);
+			split_panels[i].setLayout(split_layouts[i]);
+
+			///////////////
+			// SearchBar //
+			///////////////
+			search_bars[i] = new SearchBar(list.length);
+			split_panels[i].add(search_bars[i]);
+
+			////////////
+			// Tables //
+			////////////
 			tables[i] = new JTable(table_data[i]);
 			tables[i].setFillsViewportHeight(true);
 			table_panes[i] = new JScrollPane(tables[i]);
+
+			split_panels[i].add(table_panes[i]);
+
 		}
-		center_split.setLeftComponent(table_panes[0]);
-		center_split.setRightComponent(table_panes[1]);
+		center_split.setLeftComponent(split_panels[0]);
+		center_split.setRightComponent(split_panels[1]);
 		center_split.setDividerLocation(WIDTH / 2);
 		panel.add(center_split, BorderLayout.CENTER);
 
@@ -421,6 +443,7 @@ public class Driver extends JFrame
 		disableButtons();
 
 		setSize(WIDTH, HEIGHT);
+		setMinimumSize(new Dimension(WIDTH, HEIGHT));
 		setResizable(true);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -576,8 +599,11 @@ public class Driver extends JFrame
 		enableButtons();
 		searches[0] = new FibonacciSearch(sorted_list, value);
 		searches[1] = new ExponentialSearch(sorted_list, value);
-		table_data[0].clearTable();
-		table_data[1].clearTable();
+		for (int i = 0; i < 2; i++)
+		{
+			table_data[i].clearTable();
+			search_bars[i].reset(sorted_list.length);
+		}
 		increment();
 	}
 
@@ -595,6 +621,7 @@ public class Driver extends JFrame
 				table_data[i].addRow(searches[i].getRow());
 				tables[i].revalidate();
 				tables[i].repaint();
+				search_bars[i].add(searches[i].index);
 			}
 			else
 			{

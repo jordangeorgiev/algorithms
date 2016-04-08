@@ -12,7 +12,7 @@ public abstract class Search
 
 	int									left;
 	int									right;
-	int									index;
+	public int									index;
 	int									nextIndex;
 
 	ArrayList<Integer>	relVars	= new ArrayList<Integer>();
