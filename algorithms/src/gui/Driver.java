@@ -5,6 +5,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -70,11 +71,11 @@ public class Driver extends JFrame
 		PLAY, PAUSE, INCREMENT, FAST_FORWARD, FINISHED
 	}
 
-	private static final int			IMMEDIATE		= 0;
-	private static final int			NORMAL			= 1000;
+	private static final int			IMMEDIATE			= 0;
+	private static final int			NORMAL				= 1000;
 
-	private static final Pattern	DELIMITER		= Pattern.compile("[, ]+");
-	private static final Pattern	NUMBER			= Pattern.compile("[\\-]?[0-9]*");
+	private static final Pattern	DELIMITER			= Pattern.compile("[, ]+");
+	private static final Pattern	NUMBER				= Pattern.compile("[\\-]?[0-9]*");
 
 	// Main panel
 	private JPanel								panel;
@@ -102,14 +103,18 @@ public class Driver extends JFrame
 	// Contains both split panels
 	private JSplitPane						center_split;
 
-	private JScrollPane[]					table_panes	= new JScrollPane[2];
-	private JTable[]							tables			= new JTable[2];
+	private JPanel[]							split_panels	= new JPanel[2];
+	private SearchBar[]						search_bars		= new SearchBar[2];
+	private GridBagLayout[]				split_layouts	= new GridBagLayout[2];
 
-	private SearchTable[]					table_data	= new SearchTable[2];
+	private JScrollPane[]					table_panes		= new JScrollPane[2];
+	private JTable[]							tables				= new JTable[2];
 
-	private Search[]							searches		= new Search[2];
-	private int[]									list				= { 1, 2, 3, 4, 5 };
-	private int										value				= 1;
+	private SearchTable[]					table_data		= new SearchTable[2];
+
+	private Search[]							searches			= new Search[2];
+	private int[]									list					= { 1, 2, 3, 4, 5 };
+	private int										value					= 1;
 	private Mode									mode;
 
 	private Timer									timer;
@@ -394,6 +399,10 @@ public class Driver extends JFrame
 		// Center Split //
 		//////////////////
 		center_split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
+		////////////
+		// Tables //
+		////////////
 		table_data[0] = new FibonacciTable();
 		table_data[1] = new ExponentialTable();
 		for (int i = 0; i < 2; i++)
