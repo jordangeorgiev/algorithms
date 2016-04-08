@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Random;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -61,15 +63,20 @@ public class Driver extends JFrame
 	// Contains input-bar and toolbar
 	private JPanel						north_split;
 	private GridLayout				north_layout;
+
+	// Input bar
+	private JPanel						input_bar;
 	private JTextField				input_box;
+	private JButton						button_random;
+
+	// Toolbar
 	private JPanel						toolbar;
-
-	// private GridBagLayout center_layout;
-	// private GridBagConstraints center_constraints;
-
 	private JButton						button_toggle;
 	private JButton						button_increment;
 	private JButton						button_fastforward;
+
+	// private GridBagLayout center_layout;
+	// private GridBagConstraints center_constraints;
 
 	// Contains both split panels
 	private JSplitPane				center_split;
@@ -105,9 +112,7 @@ public class Driver extends JFrame
 				{
 					timer.stop();
 					mode = Mode.FINISHED;
-					button_toggle.setEnabled(false);
-					button_increment.setEnabled(false);
-					button_fastforward.setEnabled(false);
+					disableButtons();
 				}
 			}
 		});
@@ -138,6 +143,12 @@ public class Driver extends JFrame
 		north_split.setLayout(north_layout);
 
 		///////////////
+		// Input Bar //
+		///////////////
+
+		input_bar = new JPanel();
+
+		///////////////
 		// Input Box //
 		///////////////
 
@@ -156,9 +167,7 @@ public class Driver extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-				button_toggle.setEnabled(true);
-				button_increment.setEnabled(true);
-				button_fastforward.setEnabled(true);
+				enableButtons();
 
 				int[] sorted_list = new int[1024];
 				int value = 125;
@@ -171,7 +180,51 @@ public class Driver extends JFrame
 			}
 		});
 
-		north_split.add(input_box, 0);
+		input_bar.add(input_box);
+
+		///////////////////
+		// Button Random //
+		///////////////////
+
+		button_random = new JButton();
+		button_random.setName("Pause/Play");
+		button_random.setAction(new AbstractAction()
+		{
+
+			/**
+			 * Randomly typed serial version UID
+			 */
+			private static final long serialVersionUID = 13928131872557435L;
+
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				if (button_random.isEnabled())
+				{
+					Random r = new Random();
+					int random_max = r.nextInt(10000);
+					int[] array = new int[random_max];
+					for (int i = 0; i < random_max; i++)
+					{
+						array[i] = r.nextInt();
+					}
+					Arrays.sort(array);
+					int value = r.nextInt();
+					createSearch(array, value);
+				}
+			}
+		});
+		button_random.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "Random");
+		button_random.getActionMap().put("Random", button_random.getAction());
+		button_random.setText("Random");
+		button_random.setFocusable(false);
+		button_random.setFont(button_font);
+		button_random.setEnabled(true);
+
+		input_bar.add(button_random);
+
+		north_split.add(input_bar, 0);
 
 		/////////////
 		// Toolbar //
@@ -215,9 +268,8 @@ public class Driver extends JFrame
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "Pause/Play");
 		button_toggle.getActionMap().put("Pause/Play", button_toggle.getAction());
 		button_toggle.setText("Pause");
-		button_toggle.setFocusable(!true);
+		button_toggle.setFocusable(false);
 		button_toggle.setFont(button_font);
-		button_toggle.setEnabled(!false);
 
 		toolbar.add(button_toggle);
 
@@ -249,9 +301,8 @@ public class Driver extends JFrame
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "Increment");
 		button_increment.getActionMap().put("Increment", button_increment.getAction());
 		button_increment.setText("Increment");
-		button_increment.setFocusable(!true);
+		button_increment.setFocusable(false);
 		button_increment.setFont(button_font);
-		button_increment.setEnabled(!false);
 
 		toolbar.add(button_increment);
 
@@ -283,9 +334,8 @@ public class Driver extends JFrame
 				.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "Fast Forward");
 		button_fastforward.getActionMap().put("Fast Forward", button_fastforward.getAction());
 		button_fastforward.setText("Fast Forward");
-		button_fastforward.setFocusable(!true);
+		button_fastforward.setFocusable(false);
 		button_fastforward.setFont(button_font);
-		button_fastforward.setEnabled(!false);
 
 		toolbar.add(button_fastforward);
 
@@ -307,9 +357,12 @@ public class Driver extends JFrame
 		}
 		center_split.setLeftComponent(table_panes[0]);
 		center_split.setRightComponent(table_panes[1]);
+		center_split.setDividerLocation(WIDTH / 2);
 		panel.add(center_split, BorderLayout.CENTER);
 
 		add(panel);
+
+		disableButtons();
 
 		setSize(WIDTH, HEIGHT);
 		setResizable(true);
@@ -318,11 +371,31 @@ public class Driver extends JFrame
 
 	}
 
+	private void enableButtons()
+	{
+		setButtons(true);
+	}
+
+	private void disableButtons()
+	{
+		setButtons(false);
+	}
+
+	private void setButtons(boolean value)
+	{
+		button_toggle.setEnabled(value);
+		button_increment.setEnabled(value);
+		button_fastforward.setEnabled(value);
+	}
+
 	private void createSearch(int[] sorted_list, int value)
 	{
 		timer.stop();
+		enableButtons();
 		searches[0] = new FibonacciSearch(sorted_list, value);
 		searches[1] = new absExponSearch(sorted_list, value);
+		table_data[0].clearTable();
+		table_data[1].clearTable();
 		increment();
 	}
 
@@ -377,9 +450,7 @@ public class Driver extends JFrame
 		if (!iterate())
 		{
 			mode = Mode.FINISHED;
-			button_toggle.setEnabled(false);
-			button_increment.setEnabled(false);
-			button_fastforward.setEnabled(false);
+			disableButtons();
 		}
 		mode = Mode.PAUSE;
 	}
