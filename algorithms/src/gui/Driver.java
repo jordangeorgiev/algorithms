@@ -8,8 +8,13 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -56,50 +61,57 @@ public class Driver extends JFrame
 	private static final int	WIDTH							= 800;
 	private static final int	HEIGHT						= 800;
 
+	private static final int	MAX_VALUE					= Integer.MAX_VALUE - 147483647;
+	private static final int	MIN_VALUE					= Integer.MIN_VALUE + 147483648;
+
 	protected static enum Mode
 	{
 		PLAY, PAUSE, INCREMENT, FAST_FORWARD, FINISHED
 	}
 
-	private static final int	IMMEDIATE		= 0;
-	private static final int	NORMAL			= 1000;
+	private static final int			IMMEDIATE		= 0;
+	private static final int			NORMAL			= 1000;
+
+	private static final Pattern	DELIMITER		= Pattern.compile("[, ]*");
+	private static final Pattern	NUMBER			= Pattern.compile("[0-9]*");
 
 	// Main panel
-	private JPanel						panel;
-	private BorderLayout			layout;
+	private JPanel								panel;
+	private BorderLayout					layout;
 
 	// Contains input-bar and toolbar
-	private JPanel						north_split;
-	private GridLayout				north_layout;
+	private JPanel								north_split;
+	private GridLayout						north_layout;
 
 	// Input bar
-	private JPanel						input_bar;
-	private JTextField				input_value;
-	private JTextField				input_list;
-	private JButton						button_random;
+	private JPanel								input_bar;
+	private JTextField						input_value;
+	private JTextField						input_list;
+	private JButton								button_random;
 
 	// Toolbar
-	private JPanel						toolbar;
-	private JButton						button_toggle;
-	private JButton						button_increment;
-	private JButton						button_fastforward;
+	private JPanel								toolbar;
+	private JButton								button_toggle;
+	private JButton								button_increment;
+	private JButton								button_fastforward;
 
 	// private GridBagLayout center_layout;
 	// private GridBagConstraints center_constraints;
 
 	// Contains both split panels
-	private JSplitPane				center_split;
+	private JSplitPane						center_split;
 
-	private JScrollPane[]			table_panes	= new JScrollPane[2];
-	private JTable[]					tables			= new JTable[2];
+	private JScrollPane[]					table_panes	= new JScrollPane[2];
+	private JTable[]							tables			= new JTable[2];
 
-	private SearchTable[]			table_data	= new SearchTable[2];
+	private SearchTable[]					table_data	= new SearchTable[2];
 
-	private Search[]					searches		= new Search[2];
+	private Search[]							searches		= new Search[2];
+	private int[]									list				= { 1, 2, 3, 4, 5 };
+	private int										value				= 1;
+	private Mode									mode;
 
-	private Mode							mode;
-
-	private Timer							timer;
+	private Timer									timer;
 
 	public Driver()
 	{
@@ -121,6 +133,7 @@ public class Driver extends JFrame
 				{
 					timer.stop();
 					mode = Mode.FINISHED;
+					button_toggle.setText("Play ");
 					disableButtons();
 				}
 			}
@@ -178,15 +191,8 @@ public class Driver extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-				enableButtons();
 
-				int[] sorted_value = new int[1024];
-				int value = 125;
-				for (int i = 0; i < 1023; i++)
-				{
-					sorted_value[i] = i;
-				}
-				createSearch(sorted_value, value);
+				update();
 
 			}
 		});
@@ -213,16 +219,8 @@ public class Driver extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-				enableButtons();
-
-				int[] sorted_list = new int[1024];
-				int value = 125;
-				for (int i = 0; i < 1023; i++)
-				{
-					sorted_list[i] = i;
-				}
-				createSearch(sorted_list, value);
-
+				// Update list
+				update();
 			}
 		});
 
@@ -248,15 +246,17 @@ public class Driver extends JFrame
 				if (button_random.isEnabled())
 				{
 					Random r = new Random();
-					int random_max = r.nextInt(10000);
-					int[] array = new int[random_max];
+					int random_max = r.nextInt(1000);
+					list = new int[random_max];
 					for (int i = 0; i < random_max; i++)
 					{
-						array[i] = r.nextInt();
+						list[i] = r.nextInt(MAX_VALUE);
 					}
-					Arrays.sort(array);
-					int value = r.nextInt();
-					createSearch(array, value);
+					Arrays.sort(list);
+					value = r.nextInt();
+					input_value.setText(String.valueOf(value));
+					input_list.setText(Arrays.toString(list));
+					createSearch(list, value);
 				}
 			}
 		});
@@ -417,6 +417,101 @@ public class Driver extends JFrame
 
 	}
 
+	private void update()
+	{
+		updateValue();
+		updateList();
+		createSearch(list, value);
+	}
+
+	private void updateValue()
+	{
+		String string = input_value.getText();
+
+		// string, by default, contains only numbers, if any.
+
+		if (string.length() == 0)
+		{
+			string = "0";
+		}
+		long item = Long.parseLong(string);
+
+		if (item > MAX_VALUE)
+		{
+			// item is too big.
+			value = MAX_VALUE;
+		}
+		else if (item < MIN_VALUE)
+		{
+			// item is too small.
+			value = MIN_VALUE;
+		}
+		else
+		{
+			// item is easily an integer.
+			value = (int) item;
+		}
+		input_value.setText(String.valueOf(value));
+	}
+
+	private void updateList()
+	{
+		String string = input_list.getText();
+
+		Scanner input = new Scanner(string);
+
+		// Ensure that each possible item has only numbers - no spaces or
+		// commas
+		input.useDelimiter(DELIMITER);
+
+		ArrayList<Integer> array = new ArrayList<Integer>();
+
+		String item;
+		while (input.hasNext(NUMBER))
+		{
+			item = input.next(NUMBER);
+			item = item.replaceFirst("[0]*", "0");
+			if (item.length() >= 16)
+			{
+				item = item.substring(1, 15);
+			}
+
+			// string, by default, contains only numbers, if any, and commas and
+			// spaces.
+
+			if (item.length() == 0)
+			{
+				item = "0";
+			}
+			long possible_value = Long.parseLong(item);
+
+			if (possible_value > MAX_VALUE)
+			{
+				// item is too big.
+				array.add(MAX_VALUE);
+			}
+			else if (possible_value < MIN_VALUE)
+			{
+				// item is too small.
+				array.add(MIN_VALUE);
+			}
+			else
+			{
+				// item is easily an integer.
+				array.add((int) possible_value);
+			}
+		}
+		input.close();
+		list = new int[array.size()];
+		Collections.sort(array);
+		Iterator<Integer> iterator = array.listIterator();
+		for (int i = 0; i < array.size(); i++)
+		{
+			list[i] = iterator.next();
+		}
+		input_list.setText(array.toString());
+	}
+
 	private void enableButtons()
 	{
 		setButtons(true);
@@ -457,6 +552,7 @@ public class Driver extends JFrame
 				searches[i].next();
 				searches[i].getNextStep();
 				table_data[i].addRow(searches[i].getRow());
+				tables[i].revalidate();
 				tables[i].repaint();
 			}
 			else
@@ -490,20 +586,21 @@ public class Driver extends JFrame
 
 	private void increment()
 	{
-		button_toggle.setText("Pause");
+		button_toggle.setText("Play ");
 		timer.stop();
 		mode = Mode.INCREMENT;
 		if (!iterate())
 		{
 			mode = Mode.FINISHED;
 			disableButtons();
+			button_toggle.setText("Play ");
 		}
 		mode = Mode.PAUSE;
 	}
 
 	private void fastforward()
 	{
-		button_toggle.setText("Play ");
+		button_toggle.setText("Pause");
 		mode = Mode.FAST_FORWARD;
 		timer.stop();
 		timer.setDelay(IMMEDIATE);
