@@ -93,7 +93,7 @@ public class ValueFilter extends DocumentFilter
 		string = string.replaceAll("[^0-9\\-]", "");
 		// fb.getDocument().getLength() - (offset - length)) + string.length() >
 		// MAXIMUM_LENGTH)
-		int length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - (offset + length) + string.length());
+		int length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - length + string.length());
 		if (length_to_cut_off < 0)
 		{
 			// Modification will put the total length past the maximum.
@@ -104,7 +104,7 @@ public class ValueFilter extends DocumentFilter
 
 			string = string.substring(0, string.length() - Math.abs(length_to_cut_off));
 			// length = length + length_to_cut_off;
-			length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - (offset + length) + string.length());
+			length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - length + string.length());
 
 			if (length_to_cut_off >= 0)
 			{

@@ -33,10 +33,10 @@ public class ListFilter extends DocumentFilter
 	 * javax.swing.text.AttributeSet)
 	 */
 	@Override
-	public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException
+	public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException
 	{
-		text = text.replaceAll("[^0-9, ]", "");
-		if (fb.getDocument().getLength() + text.length() > MAXIMUM_LENGTH)
+		string = string.replaceAll("[^0-9, \\-]", "");
+		if (fb.getDocument().getLength() + string.length() > MAXIMUM_LENGTH)
 		{
 			// Inserted string will extend the document string past the maximum.
 			// Do not insert it.
@@ -48,7 +48,7 @@ public class ListFilter extends DocumentFilter
 		else
 		{
 			// Insert it.
-			fb.insertString(offset, text, attr);
+			fb.insertString(offset, string, attr);
 		}
 	}
 
@@ -74,12 +74,12 @@ public class ListFilter extends DocumentFilter
 	 * FilterBypass, int, int, java.lang.String, javax.swing.text.AttributeSet)
 	 */
 	@Override
-	public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+	public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attrs)
 			throws BadLocationException
 	{
 
-		text = text.replaceAll("[^0-9, ]", "");
-		if (fb.getDocument().getLength() + text.length() > MAXIMUM_LENGTH)
+		string = string.replaceAll("[^0-9, \\-]", "");
+		if (fb.getDocument().getLength() + string.length() > MAXIMUM_LENGTH)
 		{
 			// Modification will put the total length past the maximum.
 			// Do nothing.
@@ -91,7 +91,7 @@ public class ListFilter extends DocumentFilter
 		else
 		{
 			// Replace it
-			fb.replace(offset, length, text, attrs);
+			fb.replace(offset, length, string, attrs);
 		}
 	}
 

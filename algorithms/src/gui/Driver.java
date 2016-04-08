@@ -6,6 +6,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -205,7 +206,7 @@ public class Driver extends JFrame
 
 		input_list = new JTextField();
 		input_list.setFont(input_font);
-		input_list.setText("1, 2, 3, 4, 5");
+		input_list.setText("-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5");
 		((AbstractDocument) input_list.getDocument()).setDocumentFilter(new ListFilter());
 		input_list.setEnabled(true);
 		input_list.setAction(new AbstractAction()
@@ -457,40 +458,66 @@ public class Driver extends JFrame
 	private void updateList()
 	{
 		String string = input_list.getText();
+		string = string.replace("-", ",-");
+		string = string.replaceAll("[\\-]+,", "");
 
 		Scanner input = new Scanner(string);
 
-		// Ensure that each possible item has only numbers - no spaces or
-		// commas
+		// Ensure that each possible item has only a minus sign if applicable, and
+		// numbers - no spaces or commas
 		input.useDelimiter(DELIMITER);
 
 		ArrayList<Integer> array = new ArrayList<Integer>();
 
 		String item;
-		while (input.hasNext(NUMBER))
+		long possible_value;
+		float overflow = 0;
+		boolean end = false;
+		while (input.hasNext())
 		{
-			item = input.next(NUMBER);
-			item = item.replaceFirst("[0]*", "0");
-			if (item.length() >= 16)
+			// The easiest, simplest way.
+			possible_value = 0;
+			do
 			{
-				item = item.substring(1, 15);
+				if (input.hasNext())
+				{
+					item = input.next();
+				}
+				else
+				{
+					item = "";
+					end = true;
+				}
+			}
+			while (((item.isEmpty() || item.equals("-"))) && !end);
+
+			// Remove all but the first minus sign
+			if (end)
+			{
+				break;
+			}
+
+			try
+			{
+
+				possible_value = Long.parseLong(item);
+			}
+			catch (NumberFormatException exception)
+			{
+				// Number is too large for an integer
+				overflow = Float.parseFloat(item);
+				possible_value = (overflow > MAX_VALUE) ? MAX_VALUE : MIN_VALUE;
 			}
 
 			// string, by default, contains only numbers, if any, and commas and
-			// spaces.
+			// spaces and minus signs
 
-			if (item.length() == 0)
-			{
-				item = "0";
-			}
-			long possible_value = Long.parseLong(item);
-
-			if (possible_value > MAX_VALUE)
+			if (possible_value >= MAX_VALUE)
 			{
 				// item is too big.
 				array.add(MAX_VALUE);
 			}
-			else if (possible_value < MIN_VALUE)
+			else if (possible_value <= MIN_VALUE)
 			{
 				// item is too small.
 				array.add(MIN_VALUE);
@@ -502,6 +529,11 @@ public class Driver extends JFrame
 			}
 		}
 		input.close();
+		if (array.size() == 0)
+		{
+			Toolkit.getDefaultToolkit().beep();
+			return;
+		}
 		list = new int[array.size()];
 		Collections.sort(array);
 		Iterator<Integer> iterator = array.listIterator();
