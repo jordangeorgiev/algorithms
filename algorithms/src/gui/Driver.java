@@ -55,8 +55,8 @@ public class Driver extends JFrame
 	 */
 	private static final long	serialVersionUID	= 6847267042402021945L;
 
-	private static final Font	button_font				= new Font(Font.MONOSPACED, Font.PLAIN, 42);
-	private static final Font	input_font				= new Font(Font.MONOSPACED, Font.PLAIN, 42);
+	private static final Font	button_font				= new Font(Font.MONOSPACED, Font.PLAIN, 21);
+	private static final Font	input_font				= new Font(Font.MONOSPACED, Font.PLAIN, 21);
 
 	private static final int	WIDTH							= 800;
 	private static final int	HEIGHT						= 800;
@@ -72,8 +72,8 @@ public class Driver extends JFrame
 	private static final int			IMMEDIATE		= 0;
 	private static final int			NORMAL			= 1000;
 
-	private static final Pattern	DELIMITER		= Pattern.compile("[, ]*");
-	private static final Pattern	NUMBER			= Pattern.compile("[0-9]*");
+	private static final Pattern	DELIMITER		= Pattern.compile("[, ]+");
+	private static final Pattern	NUMBER			= Pattern.compile("[\\-]?[0-9]*");
 
 	// Main panel
 	private JPanel								panel;
@@ -253,7 +253,7 @@ public class Driver extends JFrame
 						list[i] = r.nextInt(MAX_VALUE);
 					}
 					Arrays.sort(list);
-					value = r.nextInt();
+					value = r.nextInt(MAX_VALUE);
 					input_value.setText(String.valueOf(value));
 					input_list.setText(Arrays.toString(list));
 					createSearch(list, value);

@@ -23,7 +23,7 @@ public class ListFilter extends DocumentFilter
 	/**
 	 * The maximum length
 	 */
-	private static final int MAXIMUM_LENGTH = 10000;
+	private static final int MAXIMUM_LENGTH = 100000;
 
 	/*
 	 * (non-Javadoc)

@@ -23,7 +23,7 @@ public class ValueFilter extends DocumentFilter
 	/**
 	 * The maximum length
 	 */
-	private static final int MAXIMUM_LENGTH = 10;
+	private static final int MAXIMUM_LENGTH = 15;
 
 	/*
 	 * (non-Javadoc)
@@ -33,22 +33,34 @@ public class ValueFilter extends DocumentFilter
 	 * javax.swing.text.AttributeSet)
 	 */
 	@Override
-	public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException
+	public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException
 	{
-		text = text.replaceAll("[^0-9]", "");
-		if (fb.getDocument().getLength() + text.length() > MAXIMUM_LENGTH)
+		string = string.replaceAll("[^0-9\\-]", "");
+		int length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() + string.length());
+		if (length_to_cut_off < 0)
 		{
 			// Inserted string will extend the document string past the maximum.
-			// Do not insert it.
+			// Do not insert all of it.
 
 			// Beep
 			Toolkit.getDefaultToolkit().beep();
+
+			string = string.substring(0, string.length() - Math.abs(length_to_cut_off));
+
+			length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() + string.length());
+
+			if (length_to_cut_off >= 0)
+			{
+				// Insert some of it
+				fb.insertString(offset, string, attr);
+			}
+
 			return;
 		}
 		else
 		{
-			// Insert it.
-			fb.insertString(offset, text, attr);
+			// Insert all of it.
+			fb.insertString(offset, string, attr);
 		}
 	}
 
@@ -74,24 +86,36 @@ public class ValueFilter extends DocumentFilter
 	 * FilterBypass, int, int, java.lang.String, javax.swing.text.AttributeSet)
 	 */
 	@Override
-	public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+	public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attrs)
 			throws BadLocationException
 	{
 
-		text = text.replaceAll("[^0-9]", "");
-		if (fb.getDocument().getLength() + text.length() > MAXIMUM_LENGTH)
+		string = string.replaceAll("[^0-9\\-]", "");
+		// fb.getDocument().getLength() - (offset - length)) + string.length() >
+		// MAXIMUM_LENGTH)
+		int length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - (offset + length) + string.length());
+		if (length_to_cut_off < 0)
 		{
 			// Modification will put the total length past the maximum.
-			// Do nothing.
+			// Replace some of it.
 
 			// Beep
 			Toolkit.getDefaultToolkit().beep();
+
+			string = string.substring(0, string.length() - Math.abs(length_to_cut_off));
+			// length = length + length_to_cut_off;
+			length_to_cut_off = MAXIMUM_LENGTH - (fb.getDocument().getLength() - (offset + length) + string.length());
+
+			if (length_to_cut_off >= 0)
+			{
+				fb.replace(offset, length, string, attrs);
+			}
 			return;
 		}
 		else
 		{
-			// Replace it
-			fb.replace(offset, length, text, attrs);
+			// Replace all of it
+			fb.replace(offset, length, string, attrs);
 		}
 	}
 
