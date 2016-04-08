@@ -66,7 +66,8 @@ public class Driver extends JFrame
 
 	// Input bar
 	private JPanel						input_bar;
-	private JTextField				input_box;
+	private JTextField				input_value;
+	private JTextField				input_list;
 	private JButton						button_random;
 
 	// Toolbar
@@ -147,16 +148,51 @@ public class Driver extends JFrame
 		///////////////
 
 		input_bar = new JPanel();
+		input_bar.setLayout(new BorderLayout(0, 0));
 
-		///////////////
-		// Input Box //
-		///////////////
+		/////////////////
+		// Input Value //
+		/////////////////
 
-		input_box = new JTextField();
-		input_box.setFont(input_font);
-		input_box.setText("1, 2, 3, 4, 5");
-		input_box.setEnabled(true);
-		input_box.setAction(new AbstractAction()
+		input_value = new JTextField();
+		input_value.setFont(input_font);
+		input_value.setText("123");
+		input_value.setEnabled(true);
+		input_value.setAction(new AbstractAction()
+		{
+
+			/**
+			* 
+			*/
+			private static final long serialVersionUID = 7381400032055686269L;
+
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				enableButtons();
+
+				int[] sorted_value = new int[1024];
+				int value = 125;
+				for (int i = 0; i < 1023; i++)
+				{
+					sorted_value[i] = i;
+				}
+				createSearch(sorted_value, value);
+
+			}
+		});
+
+		input_bar.add(input_value, BorderLayout.WEST);
+
+		////////////////
+		// Input List //
+		////////////////
+
+		input_list = new JTextField();
+		input_list.setFont(input_font);
+		input_list.setText("1, 2, 3, 4, 5");
+		input_list.setEnabled(true);
+		input_list.setAction(new AbstractAction()
 		{
 
 			/**
@@ -180,7 +216,7 @@ public class Driver extends JFrame
 			}
 		});
 
-		input_bar.add(input_box);
+		input_bar.add(input_list, BorderLayout.CENTER);
 
 		///////////////////
 		// Button Random //
@@ -222,7 +258,7 @@ public class Driver extends JFrame
 		button_random.setFont(button_font);
 		button_random.setEnabled(true);
 
-		input_bar.add(button_random);
+		input_bar.add(button_random, BorderLayout.EAST);
 
 		north_split.add(input_bar, 0);
 
