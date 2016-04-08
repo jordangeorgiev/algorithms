@@ -4,7 +4,6 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,25 +23,25 @@ public class SearchBar extends JPanel
 	int												length;
 	int												count;
 	ArrayList<Integer>				indices;
+	boolean										finished					= false;
+	boolean										success						= false;
 
 	public SearchBar(int length)
 	{
-		setBackground(Color.WHITE);
+		setBackground(Color.DARK_GRAY);
 		this.length = length;
 		this.count = 0;
 		this.indices = new ArrayList<Integer>();
 	}
 
-	public Graphics paint(int index, Color color, Graphics g)
+	public Graphics paint(Graphics g, int index, Color color)
 	{
-
 		g.setColor(color);
 
 		int x = (index * getWidth()) / length;
 		int y = 0;
 		int width = getWidth() / length;
 		int height = getHeight();
-		System.out.println("Printing" + x + " " + y + "," + width + " " + height);
 		g.fillRect(x, y, width, height);
 		return g;
 	}
@@ -58,10 +57,18 @@ public class SearchBar extends JPanel
 		super.paintComponent(g);
 		Iterator<Integer> iterator = indices.listIterator();
 		g.clearRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.BLACK);
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < count - 2; i++)
 		{
-			g = paint(iterator.next(), Color.GREEN, g);
+			g = paint(g, iterator.next(), Color.GRAY);
+		}
+		if (count == 1)
+		{
+			g = paint(g, iterator.next(), Color.GREEN);
+		}
+		else if (count >= 2)
+		{
+			g = paint(g, iterator.next(), Color.YELLOW);
+			g = paint(g, iterator.next(), Color.GREEN);
 		}
 	}
 
