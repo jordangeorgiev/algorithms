@@ -1,7 +1,7 @@
 /**
  * 
  */
-package search;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -24,11 +24,19 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.Timer;
+import javax.swing.text.AbstractDocument;
 
-import gui.ExponentialTable;
-import gui.FibonacciTable;
-import gui.SearchTable;
+import input.ListFilter;
+import input.ValueFilter;
+import search.FibonacciSearch;
+import search.Result;
+import search.Search;
+import search.ExponentialSearch;
+import table.ExponentialTable;
+import table.FibonacciTable;
+import table.SearchTable;
+
+import javax.swing.Timer;
 
 /**
  * @author ajkerzner@smcm.edu
@@ -157,6 +165,7 @@ public class Driver extends JFrame
 		input_value = new JTextField();
 		input_value.setFont(input_font);
 		input_value.setText("123");
+		((AbstractDocument) input_value.getDocument()).setDocumentFilter(new ValueFilter());
 		input_value.setEnabled(true);
 		input_value.setAction(new AbstractAction()
 		{
@@ -191,6 +200,7 @@ public class Driver extends JFrame
 		input_list = new JTextField();
 		input_list.setFont(input_font);
 		input_list.setText("1, 2, 3, 4, 5");
+		((AbstractDocument) input_list.getDocument()).setDocumentFilter(new ListFilter());
 		input_list.setEnabled(true);
 		input_list.setAction(new AbstractAction()
 		{
@@ -429,7 +439,7 @@ public class Driver extends JFrame
 		timer.stop();
 		enableButtons();
 		searches[0] = new FibonacciSearch(sorted_list, value);
-		searches[1] = new absExponSearch(sorted_list, value);
+		searches[1] = new ExponentialSearch(sorted_list, value);
 		table_data[0].clearTable();
 		table_data[1].clearTable();
 		increment();

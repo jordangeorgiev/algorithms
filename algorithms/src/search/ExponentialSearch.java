@@ -2,11 +2,11 @@ package search;
 
 import java.util.Scanner;
 
-public class absExponSearch extends Search {
+public class ExponentialSearch extends Search {
 	public int length;
 	public boolean boundsFound = false;
 	
-	public absExponSearch(int[] items, int item) {
+	public ExponentialSearch(int[] items, int item) {
 		super(items, item);
 		length = items.length;
 		index = 1;

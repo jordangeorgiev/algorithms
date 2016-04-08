@@ -1,9 +1,9 @@
 package search;
 
 
-public class absBinSearch extends Search{
+public class BinarySearch extends Search{
 
-	public absBinSearch(int[] items, int item) {
+	public BinarySearch(int[] items, int item) {
 		super(items, item);
 		// TODO Auto-generated constructor stub
 	}
