@@ -5,7 +5,6 @@ package search;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-// import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -373,14 +372,15 @@ public class Driver extends JFrame
 	private void increment()
 	{
 		button_toggle.setText("Pause");
+		timer.stop();
 		mode = Mode.INCREMENT;
-		timer.stop();
-		timer.setDelay(IMMEDIATE);
-		timer.setRepeats(false);
-		timer.start();
-		mode = Mode.PAUSE;
-		timer.stop();
-		timer.setRepeats(true);
+		if (!iterate())
+		{
+			mode = Mode.FINISHED;
+			button_toggle.setEnabled(false);
+			button_increment.setEnabled(false);
+			button_fastforward.setEnabled(false);
+		}
 		mode = Mode.PAUSE;
 	}
 
