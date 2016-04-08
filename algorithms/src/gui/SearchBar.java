@@ -33,40 +33,42 @@ public class SearchBar extends JPanel
 		this.indices = new ArrayList<Integer>();
 	}
 
-	public void paint(int index, Color color, Graphics g)
+	public Graphics paint(int index, Color color, Graphics g)
 	{
 
 		g.setColor(color);
 
 		int x = (index * getWidth()) / length;
-		int y = getHeight();
+		int y = 0;
 		int width = getWidth() / length;
 		int height = getHeight();
-
-		g.drawRect(x, y, width, height);
+		System.out.println("Printing" + x + " " + y + "," + width + " " + height);
+		g.fillRect(x, y, width, height);
+		return g;
 	}
 
 	public void redraw()
 	{
-		System.out.println(getWidth());
 		revalidate();
 		repaint();
 	}
 
 	public void paintComponent(Graphics g)
 	{
+		super.paintComponent(g);
 		Iterator<Integer> iterator = indices.listIterator();
 		g.clearRect(0, 0, getWidth(), getHeight());
+		g.setColor(Color.BLACK);
 		for (int i = 0; i < count; i++)
 		{
-			paint(iterator.next(), Color.BLACK, g);
+			g = paint(iterator.next(), Color.GREEN, g);
 		}
-		super.paintComponent(g);
 	}
 
 	public void add(int index)
 	{
 		this.indices.add(index);
+		count = count + 1;
 		redraw();
 	}
 
