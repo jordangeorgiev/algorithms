@@ -1,6 +1,6 @@
 package search;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public abstract class Search
 {
@@ -17,7 +17,7 @@ public abstract class Search
 
 	ArrayList<Integer>	relVars	= new ArrayList<Integer>();
 
-	public Result							result;
+	public Result				result;
 
 	public Search(int[] items, int item)
 	{
@@ -66,13 +66,13 @@ public abstract class Search
 	public void next()
 	{
 
-		System.out.println(this.toString());
-		System.out.println("RelVars: " + relVars.toString());
+		// System.out.println(this.toString());
+		// System.out.println("RelVars: " + relVars.toString());
 		// System.out.println("Result: " + result);
 		if ((this.result == Result.EQUAL) || (this.result == Result.NOTFOUND))
 		{
-			System.out.println("We here fam");
-			System.out.println("index (in search): " + index);
+			// System.out.println("We here fam");
+			// System.out.println("index (in search): " + index);
 			return;
 			// result = Result.UNDEF;
 		}
@@ -103,8 +103,5 @@ public abstract class Search
 		return string;
 	}
 
-	public Object[] getRow()
-	{
-		return new Object[] { steps, index, result.toString() };
-	}
+	public abstract Object[] getRow();
 }

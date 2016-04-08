@@ -69,5 +69,9 @@ public class absBinSearch extends Search{
 		
 		
 	}
+	public Object[] getRow()
+	{
+		return new Object[] { steps, index, result.toString(), left, right };
+	}
 
 }
