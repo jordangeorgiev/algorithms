@@ -44,6 +44,7 @@ public abstract class Search
 	public abstract void getNextStep();
 
 	// Throws indexOutOfBounds
+	
 	public Result search()
 	{
 		int value = items[index];
@@ -81,7 +82,7 @@ public abstract class Search
 			getNextStep();
 		}
 
-		steps = steps + 1;
+		
 
 	}
 

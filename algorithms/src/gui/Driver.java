@@ -617,7 +617,7 @@ public class Driver extends JFrame
 			result[i] = searches[i].result;
 			if (result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
 			{
-				searches[i].next();
+				// searches[i].next();
 				searches[i].getNextStep();
 				table_data[i].addRow(searches[i].getRow());
 				tables[i].revalidate();

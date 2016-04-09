@@ -90,6 +90,7 @@ public class FibonacciSearch extends Search
 		end_nano_time = System.nanoTime();
 		diff_nano_time = end_nano_time - start_nano_time;
 		total_nano_time = total_nano_time + diff_nano_time;
+		steps = steps + 1;
 	}
 
 	public Object[] getRow()

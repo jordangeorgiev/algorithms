@@ -11,64 +11,7 @@ public class ExponentialSearch extends Search
 		length = items.length;
 		index = 1;
 		nextIndex = 1;
-		// TODO Auto-generated constructor stub
 	}
-
-	// public static void main(String[] args) {
-	//
-	//
-	// Scanner scan = new Scanner(System.in);
-	// Object myVar = new Object();
-	//
-	//
-	//
-	// boolean gotIt = false;
-	//
-	// while(gotIt == false){
-	// System.out.print("Please enter the size of your array: ");
-	// myVar = scan.next();
-	// Object scanned = myVar;
-	//
-	// if(scanned instanceof Integer){
-	// int size = (Integer) scanned;
-	// gotIt = true;
-	// System.out.println(size);
-	// }
-	//
-	// }
-	//
-	//
-	// /*
-	// Object myVar = new Object();
-	//
-	// myVar = scan.next();
-	//
-	//
-	// Object num = (Number) myVar;
-	//
-	// if(num instanceof Integer){
-	// System.out.print("true");
-	// }
-	// else{
-	// System.out.print("False");
-	// }
-	// } */
-	//
-	//
-	//
-	//
-	//
-	// int[] sortedArr = {
-	// -900, -5, -1,
-	// 0, 9, 36,
-	// 200, 289, 900, 10001
-	// };
-	//
-	// ExponentialSearch drive = new ExponentialSearch();
-	//
-	// System.out.println(drive.expSearch(sortedArr, 10001));
-	//
-	// }
 
 	// could easily modify algorithm to take in as input whether the array is
 	// sorted in ascending or descending order and search accordingly
@@ -98,6 +41,7 @@ public class ExponentialSearch extends Search
 	@Override
 	public void getNextStep()
 	{
+		start_nano_time = System.nanoTime();
 
 		if (item > items[length - 1])
 		{
@@ -149,6 +93,11 @@ public class ExponentialSearch extends Search
 
 			binSearch();
 		}
+
+		end_nano_time = System.nanoTime();
+		diff_nano_time = end_nano_time - start_nano_time;
+		total_nano_time = total_nano_time + diff_nano_time;
+		steps = steps + 1;
 
 		// while (upper < length && sortedArr[upper] < thing){
 		// upper *= 2;
