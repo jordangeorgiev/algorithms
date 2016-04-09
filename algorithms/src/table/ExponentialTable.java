@@ -4,7 +4,7 @@
 package table;
 
 /**
- * @author AlexKerzner
+ * @author ajkerzner@smcm.edu
  *
  */
 public class ExponentialTable extends SearchTable
