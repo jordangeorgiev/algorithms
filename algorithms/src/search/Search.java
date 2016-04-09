@@ -12,10 +12,15 @@ public abstract class Search
 
 	int									left;
 	int									right;
-	public int									index;
+	public int					index;
 	int									nextIndex;
 
-	ArrayList<Integer>	relVars	= new ArrayList<Integer>();
+	long								start_nano_time;
+	long								end_nano_time;
+	long								diff_nano_time;
+	long								total_nano_time	= 0;
+
+	ArrayList<Integer>	relVars					= new ArrayList<Integer>();
 
 	public Result				result;
 
@@ -66,20 +71,13 @@ public abstract class Search
 	public void next()
 	{
 
-		// System.out.println(this.toString());
-		// System.out.println("RelVars: " + relVars.toString());
-		// System.out.println("Result: " + result);
 		if ((this.result == Result.EQUAL) || (this.result == Result.NOTFOUND))
 		{
-			// System.out.println("We here fam");
-			// System.out.println("index (in search): " + index);
 			return;
-			// result = Result.UNDEF;
 		}
 		else
 		{
 			this.index = this.nextIndex;
-			// System.out.println( "index (in search): " + index);
 			getNextStep();
 		}
 
@@ -93,7 +91,7 @@ public abstract class Search
 	 */
 	public String toString()
 	{
-		String bounds = "[" + left + "," + right + "]";
+		// String bounds = "[" + left + "," + right + "]";
 
 		// Step #: searching bounds [#,#] of array of length ###, result: $$$.
 		String string = "Step " + steps;

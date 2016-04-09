@@ -6,7 +6,6 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -77,7 +76,6 @@ public class Driver extends JFrame
 	private static final int			NORMAL				= 1000;
 
 	private static final Pattern	DELIMITER			= Pattern.compile("[, ]+");
-	private static final Pattern	NUMBER				= Pattern.compile("[\\-]?[0-9]*");
 
 	// Main panel
 	private JPanel								panel;
@@ -117,7 +115,7 @@ public class Driver extends JFrame
 	private Search[]							searches			= new Search[2];
 	private int[]									list					= { 1, 2, 3, 4, 5 };
 	private int										value					= 1;
-	private Mode									mode;
+	public Mode										mode;
 
 	private Timer									timer;
 
@@ -185,7 +183,11 @@ public class Driver extends JFrame
 
 		input_value = new JTextField();
 		input_value.setFont(input_font);
-		input_value.setText("123");
+		input_value.setText("012345678901234");
+		input_value.repaint();
+		input_value.setMinimumSize(input_value.getSize());
+		input_value.setText(String.valueOf(value));
+
 		((AbstractDocument) input_value.getDocument()).setDocumentFilter(new ValueFilter());
 		input_value.setEnabled(true);
 		input_value.setAction(new AbstractAction()
@@ -199,7 +201,6 @@ public class Driver extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
-
 				update();
 
 			}
@@ -260,8 +261,8 @@ public class Driver extends JFrame
 					{
 						list[i] = r.nextInt(MAX_VALUE);
 					}
+					value = list[random_max - 1];
 					Arrays.sort(list);
-					value = r.nextInt(MAX_VALUE);
 					input_value.setText(String.valueOf(value));
 					input_list.setText(Arrays.toString(list));
 					createSearch(list, value);
@@ -352,7 +353,7 @@ public class Driver extends JFrame
 			}
 		});
 		button_increment.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "Increment");
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, 0), "Increment");
 		button_increment.getActionMap().put("Increment", button_increment.getAction());
 		button_increment.setText("Increment");
 		button_increment.setFocusable(false);
@@ -385,7 +386,7 @@ public class Driver extends JFrame
 			}
 		});
 		button_fastforward.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-				.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "Fast Forward");
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, 0), "Fast Forward");
 		button_fastforward.getActionMap().put("Fast Forward", button_fastforward.getAction());
 		button_fastforward.setText("Fast Forward");
 		button_fastforward.setFocusable(false);

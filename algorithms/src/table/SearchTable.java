@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * @author AlexKerzner
+ * @author ajkerzner@smcm.edu
  *
  */
 public abstract class SearchTable extends AbstractTableModel
@@ -29,13 +29,15 @@ public abstract class SearchTable extends AbstractTableModel
 	 */
 	public SearchTable(String[] other_columns)
 	{
-		column_names = new String[3 + other_columns.length];
+		column_names = new String[5 + other_columns.length];
 		column_names[0] = "Step";
 		column_names[1] = "Index";
 		column_names[2] = "Result";
+		column_names[3] = "Time (nano)";
+		column_names[4] = "Total Time (nano)";
 		for (int i = 0; i < other_columns.length; i++)
 		{
-			column_names[3 + i] = other_columns[i];
+			column_names[5 + i] = other_columns[i];
 		}
 		data = new ArrayList<Object[]>();
 
