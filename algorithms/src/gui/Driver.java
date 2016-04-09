@@ -255,11 +255,18 @@ public class Driver extends JFrame
 				if (button_random.isEnabled())
 				{
 					Random r = new Random();
-					int random_max = r.nextInt(1000);
+					int random_max = r.nextInt(999) + 1;
 					list = new int[random_max];
 					for (int i = 0; i < random_max; i++)
 					{
-						list[i] = r.nextInt(MAX_VALUE);
+						if (r.nextBoolean())
+						{
+							list[i] = r.nextInt(MAX_VALUE);
+						}
+						else
+						{
+							list[i] = -r.nextInt(-MIN_VALUE);
+						}
 					}
 					value = list[random_max - 1];
 					Arrays.sort(list);
@@ -628,10 +635,10 @@ public class Driver extends JFrame
 		for (int i = 0; i < 2; i++)
 		{
 			result[i] = searches[i].result;
-			if (result[i] != Result.NOTFOUND && result[i] != Result.EQUAL)
+			if (result[i] != Result.NOT_FOUND && result[i] != Result.FOUND)
 			{
 				// searches[i].next();
-				searches[i].getNextStep();
+				searches[i] = searches[i].next();
 				table_data[i].addRow(searches[i].getRow());
 				tables[i].revalidate();
 				tables[i].repaint();

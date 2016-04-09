@@ -33,8 +33,8 @@ public abstract class SearchTable extends AbstractTableModel
 		column_names[0] = "Step";
 		column_names[1] = "Index";
 		column_names[2] = "Result";
-		column_names[3] = "Time (nano)";
-		column_names[4] = "Total Time (nano)";
+		column_names[3] = "Time";
+		column_names[4] = "Total Time";
 		for (int i = 0; i < other_columns.length; i++)
 		{
 			column_names[5 + i] = other_columns[i];

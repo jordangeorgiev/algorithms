@@ -10,20 +10,20 @@ package search;
  */
 public enum Result
 {
-	LEFT, RIGHT, EQUAL, UNDEF, NOTFOUND;
+	LEFT, RIGHT, FOUND, NOT_FOUND, UNDEF;
 
 	@Override
 	public String toString()
 	{
 		switch (this)
 		{
-			case EQUAL:
-				return "Found it";
+			case FOUND:
+				return "Found";
 			case LEFT:
-				return "Look left";
+				return "<--";
 			case RIGHT:
-				return "Look right";
-			case NOTFOUND:
+				return "-->";
+			case NOT_FOUND:
 				return "Not found";
 			case UNDEF:
 			default:
