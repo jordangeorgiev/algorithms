@@ -10,7 +10,7 @@ public class FibonacciSearch extends Search
 	int	fib			= 2;
 	int	fib1		= 1;
 	int	fib2		= 1;
-	int	offset	= 0;
+	int	offset	= -1;
 
 	public FibonacciSearch(int[] items, int item)
 	{
@@ -29,12 +29,12 @@ public class FibonacciSearch extends Search
 
 		if (steps == 0)
 		{
-			if (item == items[0])
-			{
-				index = 0;
-				result = Result.EQUAL;
-				return;
-			}
+			// if (item == items[0])
+			// {
+			// index = 0;
+			// result = Result.EQUAL;
+			// return;
+			// }
 			while (fib < len)
 			{
 				fib2 = fib1;
@@ -43,7 +43,7 @@ public class FibonacciSearch extends Search
 			}
 		}
 
-		//System.out.println("fib2: " + fib2 + " Fib1: " + fib1 + " Fib: " + fib);
+		// System.out.println("fib2: " + fib2 + " Fib1: " + fib1 + " Fib: " + fib);
 		// while(items[index]!=item){
 		index = Math.min((offset + fib2), len);
 		// if(index==len){
@@ -81,9 +81,10 @@ public class FibonacciSearch extends Search
 		relVars.set(2, fib2);
 
 	}
+
 	public Object[] getRow()
 	{
-		return new Object[] { steps, index, result.toString(),fib, fib1, fib2 };
+		return new Object[] { steps, index, result.toString(), fib, fib1, fib2 };
 	}
 	// }
 
