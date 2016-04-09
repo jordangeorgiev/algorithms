@@ -73,7 +73,7 @@ public class Driver extends JFrame
 	}
 
 	private static final int			IMMEDIATE			= 0;
-	private static final int			NORMAL				= 1000;
+	private static final int			NORMAL				= 200;
 
 	private static final Pattern	DELIMITER			= Pattern.compile("[, ]+");
 
