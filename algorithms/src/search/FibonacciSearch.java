@@ -25,22 +25,19 @@ package search;
  */
 public class FibonacciSearch extends Search
 {
-	// int length = items.length - 1;
-	int	fib			= 2;
-	int	fib1		= 1;
-	int	fib2		= 1;
-	int	offset	= -1;
+	// fib(n-2)
+	int			fib0						= 0;
+	// fib(n-1)
+	int			fib1						= 0;
+	// fib(n)
+	int			fib2						= 1;
+	int			offset					= -1;
+	Result	previous_result	= Result.UNDEF;
 
 	public FibonacciSearch(int[] items, int item)
 	{
 		super(items, item);
 		this.start_time = System.nanoTime();
-		while (fib < items.length - 1)
-		{
-			fib2 = fib1;
-			fib1 = fib;
-			fib = fib2 + fib1;
-		}
 		index = Math.min((offset + fib2), items.length - 1);
 		calculate();
 		end_time = System.nanoTime();
@@ -48,20 +45,22 @@ public class FibonacciSearch extends Search
 		this.total_time = time;
 	}
 
-	public FibonacciSearch(int[] items, int item, long total_time, long start_time, int steps, int fib, int fib1,
-			int fib2, int offset)
+	public FibonacciSearch(int[] items, int item, long total_time, long start_time, int steps, int fib0, int fib1,
+			int fib2, int offset, Result result)
 	{
 		super(items, item);
+		previous_result = result;
 		this.start_time = start_time;
 		this.steps = steps;
-		this.fib = fib;
+		this.fib0 = fib0;
 		this.fib1 = fib1;
 		this.fib2 = fib2;
 		this.offset = offset;
-
-		index = Math.min((offset + fib2), items.length - 1);
+		// if (search() != Result.FOUND)
+		// {
+		index = Math.min((this.offset + this.fib2), items.length - 1);
 		calculate();
-
+		// }
 		end_time = System.nanoTime();
 		time = end_time - start_time;
 		this.total_time = total_time + time;
@@ -69,39 +68,81 @@ public class FibonacciSearch extends Search
 	}
 
 	/**
+	 * Get next fibonacci number
+	 */
+	private int nextFibonacci()
+	{
+		this.fib0 = this.fib1;
+		this.fib1 = this.fib2;
+		// fib2 = fib2 + fib1, formula
+		this.fib2 = this.fib1 + this.fib0;
+
+		return this.fib2;
+	}
+
+	/**
+	 * Get previous fibonacci number
+	 */
+	private int prevFibonacci()
+	{
+		if (this.fib0 == 0)
+		{
+			return resetFibonacci();
+		}
+		else
+		{
+			this.fib0 = this.fib1 - this.fib0;
+			this.fib1 = this.fib2 - this.fib1;
+			this.fib2 = this.fib0 + this.fib1;
+		}
+		return this.fib2;
+	}
+
+	/**
+	 * Reset Fibonacci numbers
+	 */
+	private int resetFibonacci()
+	{
+
+		this.fib0 = 0;
+		this.fib1 = 0;
+		this.fib2 = 1;
+		return this.fib2;
+	}
+
+	/**
 	 * Get next result
 	 */
 	protected void calculate()
 	{
+		previous_result = result;
 		search();
-		if (fib <= 1)
-		{
-			result = Result.NOT_FOUND;
-		}
+
 	}
 
 	public Search next()
 	{
 		long next_start_time = System.nanoTime();
-
+		// if (((previous_result == Result.LEFT) && (result == Result.RIGHT))
+		// || ((previous_result == Result.RIGHT) || (result == Result.LEFT)))
+		// {
 		switch (result)
 		{
 			case LEFT:
 
-				// fib = fib2;
-				// fib1 = fib1 - fib2;
-				// fib2 = fib - fib1;
-				return new FibonacciSearch(items, item, total_time, next_start_time, steps + 1, fib2, fib1 - fib2, fib - fib1,
-						offset);
+				prevFibonacci();
+				resetFibonacci();
+				return new FibonacciSearch(items, item, total_time, next_start_time, steps + 1, this.fib0, this.fib1, this.fib2,
+						offset, Result.LEFT);
 			case RIGHT:
-				// fib = fib1;
-				// fib1 = fib2;
-				// fib2 = fib - fib1;
-				// offset = index
-				return new FibonacciSearch(items, item, total_time, next_start_time, steps + 1, fib1, fib2, fib - fib1, index);
+				nextFibonacci();
+				offset = index;
+				return new FibonacciSearch(items, item, total_time, next_start_time, steps + 1, this.fib0, this.fib1, this.fib2,
+						index, Result.RIGHT);
 			case UNDEF:
 				return this;
 			case FOUND:
+				System.out.println("Hi");
 				return this;
 			case NOT_FOUND:
 				return this;
@@ -118,7 +159,7 @@ public class FibonacciSearch extends Search
 
 	public Object[] getRow()
 	{
-		return new Object[] { steps, index, result.toString(), time, total_time, fib, fib1, fib2, offset };
+		return new Object[] { steps, index, result.toString(), time, total_time, fib0, fib1, fib2, offset };
 	}
 
 }

@@ -20,7 +20,7 @@ public class FibonacciTable extends SearchTable
 	 */
 	public FibonacciTable()
 	{
-		super(new String[] { "Fib", "Fib1", "Fib2" });
+		super(new String[] { "Fib0", "Fib1", "Fib2" });
 	}
 
 }
