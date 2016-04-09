@@ -1,13 +1,13 @@
 /**
  * 
  */
-package gui;
+package table;
 
 /**
  * @author AlexKerzner
  *
  */
-public class FibonacciTable extends SearchTable
+public class ExponentialTable extends SearchTable
 {
 
 	/**
@@ -18,9 +18,9 @@ public class FibonacciTable extends SearchTable
 	/**
 	 * @param other_columns
 	 */
-	public FibonacciTable()
+	public ExponentialTable()
 	{
-		super(new String[] { "Fib", "Fib1", "Fib2" });
+		super(new String[] { "Left", "Right" });
 	}
 
 }
