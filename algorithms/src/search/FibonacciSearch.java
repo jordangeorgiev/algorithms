@@ -31,7 +31,7 @@ public class FibonacciSearch extends Search
 	int			fib1						= 0;
 	// fib(n)
 	int			fib2						= 1;
-	int			offset					= 0;
+	int			offset					= -1;
 	Result	previous_result	= Result.UNDEF;
 
 	public FibonacciSearch(int[] items, int item)

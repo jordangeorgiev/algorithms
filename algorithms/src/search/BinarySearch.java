@@ -59,9 +59,19 @@ public class BinarySearch extends Search
 		{
 			case LEFT:
 				// between left and midpoint
+				if (left + 1 == right)
+				{
+					// Sublength is 1, manually include upper bound.
+					return new BinarySearch(items, item, total_time, next_start_time, steps + 1, left + 1, getMidPoint());
+				}
 				return new BinarySearch(items, item, total_time, next_start_time, steps + 1, left, getMidPoint());
 			case RIGHT:
 				// between midpoint and right
+				if (left + 1 == right)
+				{
+					// Sublength is 1, manually include upper bound.
+					return new BinarySearch(items, item, total_time, next_start_time, steps + 1, getMidPoint() + 1, right);
+				}
 				return new BinarySearch(items, item, total_time, next_start_time, steps + 1, getMidPoint(), right);
 			case UNDEF:
 				return this;

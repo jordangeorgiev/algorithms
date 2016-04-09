@@ -47,6 +47,11 @@ public abstract class Search
 		if (item < value)
 		{
 			this.result = Result.LEFT;
+			if (index == 0)
+			{
+				// Left of leftmost value
+				this.result = Result.NOT_FOUND;
+			}
 		}
 		else if (item == value)
 		{
@@ -55,6 +60,11 @@ public abstract class Search
 		else
 		{
 			this.result = Result.RIGHT;
+			if (index == items.length - 1)
+			{
+				// Right of rightmost value
+				this.result = Result.NOT_FOUND;
+			}
 		}
 
 		return this.result;
