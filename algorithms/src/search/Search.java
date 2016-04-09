@@ -2,6 +2,11 @@ package search;
 
 import java.util.ArrayList;
 
+/**
+ * 
+ * @author ajkerzner@smcm.edu
+ *
+ */
 public abstract class Search
 {
 
@@ -44,7 +49,7 @@ public abstract class Search
 	public abstract void getNextStep();
 
 	// Throws indexOutOfBounds
-	
+
 	public Result search()
 	{
 		int value = items[index];
@@ -81,8 +86,6 @@ public abstract class Search
 			// this.index = this.nextIndex;
 			getNextStep();
 		}
-
-		
 
 	}
 

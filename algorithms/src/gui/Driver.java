@@ -462,7 +462,20 @@ public class Driver extends JFrame
 	{
 		String string = input_value.getText();
 
+		string = string.replaceFirst("\\-", "++");
+		if (!string.startsWith("++"))
+		{
+			string = string.replaceAll("\\+\\+", "");
+		}
+		string = string.replaceAll("-", "");
+		string = string.replaceFirst("\\+\\+", "-");
+
 		// string, by default, contains only numbers, if any.
+
+		if (string.equals("-"))
+		{
+			string = "";
+		}
 
 		if (string.length() == 0)
 		{

@@ -1,5 +1,10 @@
 package search;
 
+/**
+ * 
+ * @author sfrosenblatt@smcm.edu
+ *
+ */
 public class ExponentialSearch extends Search
 {
 	public int			length;
