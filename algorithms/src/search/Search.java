@@ -77,7 +77,7 @@ public abstract class Search
 		}
 		else
 		{
-			this.index = this.nextIndex;
+			// this.index = this.nextIndex;
 			getNextStep();
 		}
 

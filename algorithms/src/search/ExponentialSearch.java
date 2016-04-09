@@ -3,7 +3,6 @@ package search;
 public class ExponentialSearch extends Search
 {
 	public int			length;
-
 	public boolean	boundsFound	= false;
 
 	public ExponentialSearch(int[] items, int item)
@@ -12,7 +11,89 @@ public class ExponentialSearch extends Search
 		length = items.length;
 		index = 1;
 		nextIndex = 1;
+		// TODO Auto-generated constructor stub
 	}
+
+	// public static void main(String[] args) {
+	//
+	//
+	// Scanner scan = new Scanner(System.in);
+	// Object myVar = new Object();
+	//
+	//
+	//
+	// boolean gotIt = false;
+	//
+	// while(gotIt == false){
+	// System.out.print("Please enter the size of your array: ");
+	// myVar = scan.next();
+	// Object scanned = myVar;
+	//
+	// if(scanned instanceof Integer){
+	// int size = (Integer) scanned;
+	// gotIt = true;
+	// System.out.println(size);
+	// }
+	//
+	// }
+	//
+	//
+	// /*
+	// Object myVar = new Object();
+	//
+	// myVar = scan.next();
+	//
+	//
+	// Object num = (Number) myVar;
+	//
+	// if(num instanceof Integer){
+	// System.out.print("true");
+	// }
+	// else{
+	// System.out.print("False");
+	// }
+	// } */
+	//
+	//
+	//
+	//
+	//
+	// int[] sortedArr = {
+	// -900, -5, -1,
+	// 0, 9, 36,
+	// 200, 289, 900, 10001
+	// };
+	//
+	// ExponentialSearch drive = new ExponentialSearch();
+	//
+	// System.out.println(drive.expSearch(sortedArr, 10001));
+	//
+	// }
+
+	// could easily modify algorithm to take in as input whether the array is
+	// sorted in ascending or descending order and search accordingly
+	// Pre: we assume the array sortedArr is sorted in ascending order
+	// public int expSearch(int[] sortedArr, int thing){
+	//
+	// int length = sortedArr.length;
+	// int upper = 1; //current upper bound of the part of the array we are
+	// searching in
+	//
+	// //For the purposes of this project we work with
+	// //an array of finite size but this algorithm can be modified
+	// //slightly to work with infinite lists
+	//
+	// while (upper < length && sortedArr[upper] < thing){
+	// upper *= 2;
+	// }
+	//
+	// upper = Math.min(upper, (length - 1));
+	//
+	//
+	//
+	// System.out.println(sortedArr + " " + thing + " " + upper/2 + " " + upper);
+	// return binSearch(sortedArr, thing, upper/2, upper);
+	// }
 
 	@Override
 	public void getNextStep()
@@ -47,7 +128,7 @@ public class ExponentialSearch extends Search
 				// the item we are looking for is still greater than the item at the
 				// index of the current power of two
 				this.result = Result.RIGHT;
-				nextIndex *= 2;
+				index *= 2;
 			}
 			else
 			{
@@ -60,7 +141,7 @@ public class ExponentialSearch extends Search
 				// right);
 				int midPoint = left + ((right - left) / 2);
 
-				nextIndex = midPoint;
+				index = midPoint;
 			}
 		}
 		else
@@ -101,8 +182,8 @@ public class ExponentialSearch extends Search
 			// System.out.println("item is not an element of the array. The value
 			// returned is not actually the index of item");
 			// return -1;
-			result = Result.UNDEF;
-			nextIndex = left + ((right - left) / 2);
+			result = Result.NOTFOUND;
+			index = left + ((right - left) / 2);
 
 		}
 		else if (item <= items[index])
@@ -110,7 +191,7 @@ public class ExponentialSearch extends Search
 			// return binSearch(items, item, left, midPoint);
 			right = index - 1;
 			result = Result.LEFT;
-			nextIndex = left + ((right - left) / 2);
+			index = left + ((right - left) / 2);
 		}
 		else if (item >= items[index])
 		{
@@ -118,13 +199,13 @@ public class ExponentialSearch extends Search
 			// return binSearch(items, item, midPoint, right);
 			left = index + 1;
 			result = Result.RIGHT;
-			nextIndex = left + ((right - left) / 2);
+			index = left + ((right - left) / 2);
 		}
 		else
 		{
 			// System.out.println("Something went wrong");
 			// return -1;
-			nextIndex = left + ((right - left) / 2);
+			index = left + ((right - left) / 2);
 		}
 
 	}
